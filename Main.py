@@ -10,6 +10,7 @@ from utils import plots
 from torch import load
 import torch
 from random import randint
+import seaborn as sns
 
 
 
@@ -65,15 +66,15 @@ if load_model:
 #/////////////////////#
 
 rate = rate(model=model, opt=optimizer, loss=loss)
-# rate.train(epochs=20, df_train=train, save_model=True)
+rate.train(epochs=1000, df_train=train, save_model=True)
 
 
-
+#%%
 #/////////////////////#
 #  TRAIN - PLOT LOSS  #
 #/////////////////////#
 
-# plots().train_loss(rate.train_results)
+plots().train_loss(rate.train_results)
 
 
 
@@ -115,21 +116,26 @@ for n in range(3):
 
 
 
-
 #/////////////////////#
 #       PREDICT       #
 #/////////////////////#
 
-#%%
-data = data()
-tensor_predict = data.predict_data().tensor.unsqueeze(0).to(device)
+
+tensor_predict = data.predict_data('caminhão.jpg').tensor.unsqueeze(0).to(device)
 
 
-y_index = model.forward(tensor_predict).argmax()
+predict = model.forward(tensor_predict)
+y_index = predict.argmax()
 y_predict = data.cat[y_index]
+
 
 tensor_predict[:, 0, :, :] = tensor_predict[:, 0, :, :] * data.std[0] + data.mean[0]
 tensor_predict[:, 1, :, :] = tensor_predict[:, 1, :, :] * data.std[1] + data.mean[1]
 tensor_predict[:, 2, :, :] = tensor_predict[:, 2, :, :] * data.std[2] + data.mean[2]
 
+
 plots().image(img=tensor_predict, y=y_predict)
+
+
+df = pd.DataFrame({'category':data.cat, 'predict':predict[0].tolist()})
+sns.barplot(data=df, x='predict', y='category');

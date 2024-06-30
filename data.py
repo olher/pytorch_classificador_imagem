@@ -17,8 +17,8 @@ class data():
         to_tensor = T.Compose([T.Resize((32,32))
                               ,T.ToTensor()]) 
 
-        self.cifar10_train = CIFAR10('train', train=True, download=True, transform=to_tensor)
-        self.cifar10_test = CIFAR10('test', train=False, download=True, transform=to_tensor)
+        self.cifar10_train = CIFAR10('train', train=True, download=False, transform=to_tensor)
+        self.cifar10_test = CIFAR10('test', train=False, download=False, transform=to_tensor)
 
         imgs_train = torch.stack([tensor for tensor, _ in self.cifar10_train], dim=3)
 
